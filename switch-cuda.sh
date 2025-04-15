@@ -45,12 +45,52 @@ if [[ -z ${TARGET_VERSION} ]]; then
     done
     set +e
     return
+
+# if target is 'default' → clean CUDA environment variables
+elif [[ "${TARGET_VERSION}" == "default" ]]; then
+    # Remove CUDA entries from PATH
+    path_elements=(${PATH//:/ })
+    new_path=""
+    for p in "${path_elements[@]}"; do
+        if [[ ! ${p} =~ ^${INSTALL_FOLDER}/cuda ]]; then
+            if [[ -z "${new_path}" ]]; then
+                new_path="${p}"
+            else
+                new_path="${new_path}:${p}"
+            fi
+        fi
+    done
+    export PATH="${new_path}"
+
+    # Remove CUDA entries from LD_LIBRARY_PATH
+    ld_path_elements=(${LD_LIBRARY_PATH//:/ })
+    new_ld_path=""
+    for p in "${ld_path_elements[@]}"; do
+        if [[ ! ${p} =~ ^${INSTALL_FOLDER}/cuda ]]; then
+            if [[ -z "${new_ld_path}" ]]; then
+                new_ld_path="${p}"
+            else
+                new_ld_path="${new_ld_path}:${p}"
+            fi
+        fi
+    done
+    export LD_LIBRARY_PATH="${new_ld_path}"
+
+    # Unset CUDA-specific variables
+    unset CUDA_HOME
+    unset CUDA_ROOT
+
+    echo "CUDA environment has been reset to default."
+    set +e
+    return
+
 # otherwise, check whether there is an installation of the requested CUDA version
 elif [[ ! -d "${INSTALL_FOLDER}/cuda-${TARGET_VERSION}" ]]; then
     echo "No installation of CUDA ${TARGET_VERSION} has been found!"
     set +e
     return
 fi
+
 
 # the path of the installation to use
 cuda_path="${INSTALL_FOLDER}/cuda-${TARGET_VERSION}"
