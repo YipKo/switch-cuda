@@ -1,6 +1,8 @@
 switch-cuda
 ===========
 
+(Chinese version) 中文版使用说明可以看这里：https://yipko.com/posts/work/cuda-switcher-with-conda/
+
 Sometimes, it becomes necessary to switch to an earlier version of CUDA in order to run older code on a machine that is
 actually set up to use the current version of the CUDA toolkit.
 
