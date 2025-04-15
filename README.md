@@ -52,3 +52,44 @@ Switched to CUDA 9.0.
 $ source switch-cuda.sh default
 CUDA environment has been reset to default.
 ```
+
+Conda Integration
+--------
+You can automatically switch to a specific CUDA version when activating a conda environment by adding a hook inside the environment’s `etc/conda/activate.d` and `etc/conda/deactivate.d` directories.
+
+**Example:**
+
+Assuming your environment is located at `~/miniconda3/envs/YOUR_ENV_NAME` and your "switch-cuda.sh" is located at `~/switch-cuda.sh`. The CUDA version you want to use in your environment is `12.1`.
+
+Create the following two scripts:
+```
+~/miniconda3/envs/YOUR_ENV_NAME/etc/conda/activate.d/set-cuda.sh
+~/miniconda3/envs/YOUR_ENV_NAME/etc/conda/deactivate.d/reset-cuda.sh
+```
+
+**activate.d/set-cuda.sh**
+```
+#!/bin/bash
+source ~/Projects/switch-cuda.sh 12.1
+```
+**activate.d/reset-cuda.sh**
+```
+#!/bin/bash
+source ~/Projects/switch-cuda.sh default
+```
+
+**Usage**
+
+Now, whenever you activate `YOUR_ENV_NAME`:
+```
+conda activate YOUR_ENV_NAME
+```
+It will automatically switch to `12.1`.
+
+And when you deactivate:
+```
+conda deactivate
+```
+It will reset back to the system default CUDA setup.
+
+
